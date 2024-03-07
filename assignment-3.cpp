@@ -1,11 +1,14 @@
 // PHYS 30762 Programming in C++
 // Assignment 3
 // Practice with C++ classes and their interactions
+// Hamish Hare
 
 #include<iostream>
 #include<string>
 #include<vector>
 #include<cmath>
+#include<cstdlib> // for abs() function
+#include <stdexcept> // for throwing exceptions
 
 using std::string;
 
@@ -13,14 +16,31 @@ using std::string;
 class particle
 {
 private:
-  string particle_name;
-  //...other data members (see slides on BB)
+  const double speed_of_light = 2.99792458e8; // in m/s, speed of light in vacuum
+
+  string particle_name{"electron"};
+  double rest_mass{0.51099895}; // in Mev
+  int charge{1};
+  double velocity{0};
+  double beta{velocity/speed_of_light};
 
 public:
   // Constructors
-  // Here you need a default constructor, and a parameterised constructor
+  // .. Default constructor
+  particle() = default;
+  // .. Parameterised constructor
+  particle(string name, double mass, int charge_quanta, double particle_velocity) :
+    particle_name{name}, rest_mass{mass}, charge{charge_quanta}, velocity{particle_velocity},
+    beta{particle_velocity/speed_of_light}
+  {
+    // check that the particle speed does not exceed the speed of light
+    if(std::abs(particle_velocity)>speed_of_light)
+      throw std::invalid_argument(
+        "Velocity " + std::to_string(particle_velocity) + " m/s exceeds the speed of light");
+  }
 
   // Destructor
+  ~particle(){std::cout<<"Destroyed an "<<particle_name<<std::endl;} // DEBUG comment
 
   // Getter functions (accessors) to 
   // This should include function returning beta value 
@@ -53,6 +73,9 @@ public:
 // Main program
 int main()
 {
+  particle e1;
+  particle e2("electron", 0.511, 1, 1213131.0);
+  particle e3("electron", 0.511, 1, -3.12012e9);
 
   // Create the following particles: 
   // two electrons, four muons, one antielectron, one antimuon
