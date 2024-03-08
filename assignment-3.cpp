@@ -223,36 +223,52 @@ int main()
   double electron_rest_mass{0.51099895}; // MeV
   double muon_rest_mass{105.6583755}; // MeV
 
-  particle e1;
-  particle e2("electron", 0.511, 1, 1213131.0);
+  // particle e1;
+  // particle e2("electron", 0.511, 1, 1213131.0);
   //particle e3("electron", 0.511, 1, -3.12012e9); // Exceed speed of light
   //particle e4("electron", -0.511, 1, 3.12012e7); // Negative mass
   //e2.print_data();
 
-  detector d1;
-  detector d2("muon chamber", true);
-  d2.set_detection_count(20);
+  // detector d1;
+  // detector d2("muon chamber", true);
+  // d2.set_detection_count(20);
 
-  particle m1("muon", muon_rest_mass, -1, 6.943e7);
+  // particle m1("muon", muon_rest_mass, -1, 6.943e7);
 
-  d2.print_data();
-  d2.detect_particle(m1);
-  d2.print_data();
-  d2.turn_off();
-  d2.detect_particle(m1);
-  d2.print_data();
-  d2.detect_particle(e2);
-  d2.print_data();
+  // d2.print_data();
+  // d2.detect_particle(m1);
+  // d2.print_data();
+  // d2.turn_off();
+  // d2.detect_particle(m1);
+  // d2.print_data();
+  // d2.detect_particle(e2);
+  // d2.print_data();
 
   // Create the following particles: 
   // two electrons, four muons, one antielectron, one antimuon
   // Use the parameterised constructor
-  // Create paricles:
+  // Create a vector of particles:
+  // two electrons, four muons, one antielectron, one antimuon
+  std::vector<particle> particles;
 
+  particles.emplace_back("electron", electron_rest_mass, 1, 41.21);
+  particles.emplace_back("electron", electron_rest_mass, 1, -2.01e8);
+  particles.emplace_back("muon", muon_rest_mass, 1, 34324.12);
+  particles.emplace_back("muon", muon_rest_mass, 1, -612.5421);
+  particles.emplace_back("muon", muon_rest_mass, 1, 9.6233e3);
+  particles.emplace_back("muon", muon_rest_mass, 1, 0.56);
+  particles.emplace_back("electron", electron_rest_mass, -1, 1.74e7);
+  particles.emplace_back("muon", muon_rest_mass, -1, 0.0);
 
-  // Print out the data from all the particles (put them in a vector)
+  // Print out the data from all the particles
+  for(auto particle=particles.begin(); particle<particles.end(); ++particle)
+  {
+    (*particle).print_data();
+  }
 
   // Create the following detectors: a tracker, a calorimeter, a muon chamber
+  // Create a vector of detectors:
+  // a tracker, a calorimeter, a muon chamber
 
   // Pass the list of particles into each detector
 
