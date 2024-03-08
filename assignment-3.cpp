@@ -79,18 +79,14 @@ public:
   //void set_beta(const double& name){return beta;}
 
   // Function to print info about a particle
-  void print_data()
+  void const print_data()
   {
-    std::cout<<"Name: "<<particle_name<<" Mass: "<<rest_mass<<
-    " Charge: "<<charge<<" Vel: "<<velocity<<
-    " Beta: "<<beta<<std::endl;
-
     std::cout<<"--------------------------------"<<std::endl;
     std::cout<<"Particle:"<<std::endl
     <<" -- Type: "<<particle_name<<std::endl
-    <<" -- Mass: "<<rest_mass<<std::endl
+    <<" -- Mass: "<<rest_mass<<" MeV"<<std::endl
     <<" -- Charge: "<<charge<<std::endl
-    <<" -- Velocity: "<<velocity<<std::endl
+    <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
     <<" -- Beta: "<<beta<<std::endl;
     std::cout<<"--------------------------------"<<std::endl;
 
@@ -143,6 +139,7 @@ public:
   detector(string type, bool initial_status) : detector_type{type}, status{initial_status}
   {
     // Validation
+    // TODO!!
     // .. check that the detector type is valid
   }
 
@@ -162,7 +159,7 @@ public:
   void set_detection_count(const size_t& new_count){detection_count = new_count;}
 
   // Print the detector information
-  void print_data()
+  void const print_data()
   {
     std::cout<<"--------------------------------"<<std::endl;
     std::cout<<"Detector:"<<std::endl
@@ -172,6 +169,20 @@ public:
     std::cout<<"--------------------------------"<<std::endl;
   }
 
+  int detect_particle(particle& particle)
+  {
+    //TODO: MAKE THIS WORK CORRECTLY
+    if(status)
+    {
+      if(particle.get_name()=="electron")
+      {
+        detection_count++;
+        std::cout<<particle.get_name()<<" was detected by a "<<detector_type<<std::endl;
+        return 1;
+      }
+    }
+    return 0;
+  }
 };
 
 // End of detector class
@@ -187,17 +198,15 @@ int main()
   particle e2("electron", 0.511, 1, 1213131.0);
   //particle e3("electron", 0.511, 1, -3.12012e9); // Exceed speed of light
   //particle e4("electron", -0.511, 1, 3.12012e7); // Negative mass
-
-  // std::cout<<"Name: "<<e2.get_name()<<" Mass: "<<e2.get_rest_mass()<<
-  // " Charge: "<<e2.get_charge()<<" Vel: "<<e2.get_velocity()<<
-  // " Beta: "<<e2.get_beta()<<std::endl;
   e2.print_data();
 
   detector d1;
   detector d2("muon chamber", true);
   d2.set_detection_count(20);
+  //d1.print_data();
+  d2.print_data();
 
-  d1.print_data();
+  d2.detect_particle(e1);
   d2.print_data();
 
   // Create the following particles: 
