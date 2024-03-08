@@ -35,9 +35,9 @@ class particle
 private:
   const double speed_of_light = 2.99792458e8; // in m/s, speed of light in vacuum
 
-  string particle_name{"electron"};
+  string particle_type{"electron"};
   double rest_mass{0.51099895}; // in Mev
-  int charge{1};
+  int charge{1}; // multiples of -e
   double velocity{0};
   double beta{velocity/speed_of_light};
 
@@ -46,8 +46,8 @@ public:
   // .. Default constructor
   particle() = default;
   // .. Parameterised constructor
-  particle(string name, double mass, int charge_quanta, double particle_velocity) :
-    particle_name{name}, rest_mass{mass}, charge{charge_quanta}, velocity{particle_velocity},
+  particle(string type, double mass, int charge_quanta, double particle_velocity) :
+    particle_type{type}, rest_mass{mass}, charge{charge_quanta}, velocity{particle_velocity},
     beta{particle_velocity/speed_of_light}
   {
     // Validation
@@ -61,10 +61,14 @@ public:
   }
 
   // Destructor
-  ~particle(){std::cout<<"Destroyed an "<<particle_name<<std::endl;} // DEBUG comment
+  ~particle(){std::cout<<"Destroyed an "<<particle_type<<std::endl;} // DEBUG comment
 
   // Getter functions
-  string get_name(){return particle_name;}
+  string get_type(){return particle_type;}
+  string get_name() // adapt the particle name if it's an anti-particle
+  {
+    if(charge<0) return "anti"+particle_type; else return particle_type;
+  }
   double get_rest_mass(){return rest_mass;}
   int get_charge(){return charge;}
   double get_velocity(){return velocity;}
@@ -74,7 +78,7 @@ public:
   // Make sure you check input validity before changing something
   // Hint: you can use the input checking functions you used in assignment 1
   // TODO: VALIDATION
-  void set_name(const string& name){particle_name = name;}
+  void set_type(const string& type){particle_type = type;}
   void set_rest_mass(const double& mass){rest_mass = mass;}
   void set_charge(const int& charge_quanta){charge = charge_quanta;}
   void set_velocity(const double& particle_velocity)
@@ -87,27 +91,13 @@ public:
   // Function to print info about a particle
   void const print_data()
   {
-    std::cout<<"--------------------------------"<<std::endl;
-    std::cout<<"Particle:"<<std::endl
-    <<" -- Type: "<<particle_name<<std::endl
-    <<" -- Mass: "<<rest_mass<<" MeV"<<std::endl
-    <<" -- Charge: "<<charge<<std::endl
+    std::cout
+    <<" -- Type: "<<particle_type<<std::endl
+    <<" -- Rest Mass: "<<rest_mass<<" MeV"<<std::endl
+    <<" -- Charge: "<<-charge<<" e"<<std::endl
     <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
     <<" -- Beta: "<<beta<<std::endl;
-    std::cout<<"--------------------------------"<<std::endl;
-
-    // std::ostringstream output_stream;
-
-    // output_stream<<"Particle details:"<<std::endl
-    // <<" -- Type: "<<particle_name<<std::endl
-    // <<" -- Rest mass: "<<rest_mass<<" MeV"<<std::endl
-    // <<" -- Charge: "<<charge<<std::endl
-    // <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
-    // <<" -- Beta: "<<beta<<std::endl;
-    //course_name = course_name_stream.str();
-    //course_name_stream.str(""); // clear stream
   }
-
 };
 
 // Implementation of print_data function goes here
@@ -142,14 +132,14 @@ private:
   // by this detector
   bool const can_detect(particle& particle)
   {
-    string particle_name = particle.get_name();
+    string particle_type = particle.get_type();
     // .. tracker can detect both electrons and muons
     if(detector_type=="tracker" &&
-      (particle_name=="electron" || particle_name=="muon")) return true;
+      (particle_type=="electron" || particle_type=="muon")) return true;
     // .. calorimeter can detect electrons
-    else if(detector_type=="calorimeter" && particle_name=="electron") return true;
+    else if(detector_type=="calorimeter" && particle_type=="electron") return true;
     // .. muon chamber can detect muons
-    else if(detector_type=="muon chamber" && particle_name=="muon") return true;
+    else if(detector_type=="muon chamber" && particle_type=="muon") return true;
     // .. otherwise undetected
     return false;
   }
@@ -196,13 +186,10 @@ public:
   // Print the detector information
   void const print_data()
   {
-    std::cout<<"--------------------------------"<<std::endl;
-    std::cout<<"Detector:"<<std::endl
-    <<" -- Type: "<<detector_type<<std::endl
+    std::cout
     <<" -- Status: "<<status_message()<<std::endl
-    <<" -- Detected: "<<detection_count<<std::endl
+    <<" -- Detected particles: "<<detection_count<<std::endl
     <<" -- Total particle count: "<<total_particle_count<<std::endl;
-    std::cout<<"--------------------------------"<<std::endl;
   }
 
   int detect_particle(particle& particle)
@@ -213,7 +200,7 @@ public:
     if(status && can_detect(particle))
     {
       detection_count++;
-      std::cout<<particle.get_name()<<" was detected by a "<<detector_type<<std::endl;
+      std::cout<<particle.get_name()<<" was detected"<<std::endl;
       return 1;
     }
     return 0;
@@ -240,33 +227,9 @@ void pass_particles_through_detector(detector& current_detector,
 int main()
 {
   // Constants
-  double electron_rest_mass{0.51099895}; // MeV
-  double muon_rest_mass{105.6583755}; // MeV
+  const double electron_rest_mass{0.51099895}; // MeV
+  const double muon_rest_mass{105.6583755}; // MeV
 
-  // particle e1;
-  // particle e2("electron", 0.511, 1, 1213131.0);
-  //particle e3("electron", 0.511, 1, -3.12012e9); // Exceed speed of light
-  //particle e4("electron", -0.511, 1, 3.12012e7); // Negative mass
-  //e2.print_data();
-
-  // detector d1;
-  // detector d2("muon chamber", true);
-  // d2.set_detection_count(20);
-
-  // particle m1("muon", muon_rest_mass, -1, 6.943e7);
-
-  // d2.print_data();
-  // d2.detect_particle(m1);
-  // d2.print_data();
-  // d2.turn_off();
-  // d2.detect_particle(m1);
-  // d2.print_data();
-  // d2.detect_particle(e2);
-  // d2.print_data();
-
-  // Create the following particles: 
-  // two electrons, four muons, one antielectron, one antimuon
-  // Use the parameterised constructor
   // Create a vector of particles:
   // two electrons, four muons, one antielectron, one antimuon
   std::vector<particle> particles;
@@ -281,12 +244,19 @@ int main()
   particles.emplace_back("muon", muon_rest_mass, -1, 0.0);
 
   // Print out the data from all the particles
+  std::cout<<"============================="<<std::endl
+           <<"          PARTICLES"<<std::endl
+           <<"============================="<<std::endl;
+  int i{1};
   for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
   {
+    std::cout<<"Particle "<<i<<" ("<<(*particle).get_name()<<"):"<<std::endl
+             <<"-----------------------------"<<std::endl;
     (*particle).print_data();
+    std::cout<<"-----------------------------"<<std::endl;
+    i++;
   }
 
-  // Create the following detectors: a tracker, a calorimeter, a muon chamber
   // Create a vector of detectors:
   // a tracker, a calorimeter, a muon chamber
   std::vector<detector> detectors;
@@ -296,25 +266,33 @@ int main()
   detectors.emplace_back("muon chamber", false);
 
   // Pass the list of particles into each detector
+  std::cout<<std::endl
+           <<"============================="<<std::endl
+           <<"          DETECTION"<<std::endl
+           <<"============================="<<std::endl;
   for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
   {
     // .. print which detector is currently in use
-    std::cout<<std::endl<<"===================================="<<std::endl;
     std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl;
-    std::cout<<"------------------------------------"<<std::endl;
+    std::cout<<"-----------------------------"<<std::endl;
     // .. pass the particles through it
     pass_particles_through_detector((*detector), particles);
-    std::cout<<"===================================="<<std::endl;
+    std::cout<<"-----------------------------"<<std::endl;
   }
 
   // Print a summary of how many particles were detected
-  std::cout<<std::endl<<"==========================="<<std::endl;
-  std::cout<<"          SUMMARY"<<std::endl;
+  std::cout<<std::endl
+           <<"============================="<<std::endl
+           <<"           SUMMARY"<<std::endl
+           <<"============================="<<std::endl;
+  // .. loop over each detector
   for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
   {
+    std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl
+             <<"-----------------------------"<<std::endl;
     (*detector).print_data();
+    std::cout<<"-----------------------------"<<std::endl;
   }
-  std::cout<<"==========================="<<std::endl;
 
   return 0;
 }
