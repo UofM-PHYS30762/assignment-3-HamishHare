@@ -35,6 +35,13 @@ TODO:
       rather than just total detections of both///
 ---- */
 
+// Function to convert strings to lowercase
+void to_lowercase(string& input_string)
+{
+  std::transform(input_string.begin(), input_string.end(), input_string.begin(),
+                   [](unsigned char c){return std::tolower(c);});
+}
+
 // Beginning of particle class
 class particle
 {
@@ -58,8 +65,9 @@ public:
            velocity{particle_velocity}, beta{particle_velocity/speed_of_light}
   {
     // Make particle_type lowercase
-    std::transform(particle_type.begin(), particle_type.end(), particle_type.begin(),
-                   [](unsigned char c){return std::tolower(c);});
+    // std::transform(particle_type.begin(), particle_type.end(), particle_type.begin(),
+    //                [](unsigned char c){return std::tolower(c);});
+    to_lowercase(particle_type);
 
     // Validation
     // .. check that the particle speed doesn't exceed the speed of light
@@ -281,7 +289,7 @@ int main()
   std::vector<particle> particles;
 
   particles.emplace_back("electron", electron_rest_mass, 1, 41.21);
-  particles.emplace_back("electron", electron_rest_mass, 1, -2.01e8);
+  particles.emplace_back("ELecTrOn", electron_rest_mass, 1, -2.01e8);
   particles.emplace_back("muon", muon_rest_mass, 1, 34324.12);
   particles.emplace_back("muon", muon_rest_mass, 1, -612.5421);
   particles.emplace_back("muon", muon_rest_mass, 1, 9.6233e3);
