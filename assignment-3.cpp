@@ -37,6 +37,9 @@ private:
   // .. particle type
   void validate_type()
   {
+    // make particle_type lowercase
+    to_lowercase(particle_type);
+    // ensure its an acceptable input
     if(!(particle_type=="electron" || particle_type=="muon"))
     {
       std::cout<<"Provided type "<<particle_type<<" is not 'electron' or 'muon'";
@@ -81,9 +84,6 @@ public:
            particle_type{type}, rest_mass{mass}, charge{charge_quanta},
            velocity{particle_velocity}, beta{particle_velocity/speed_of_light}
   {
-    // Make particle_type lowercase
-    to_lowercase(particle_type);
-
     // Validation
     // .. check that the particle type is either "electron" or "muon"
     validate_type();
@@ -173,6 +173,9 @@ private:
   // .. detector type
   void validate_type()
   {
+    // make detector_type lowercase
+    to_lowercase(detector_type);
+    // ensure its an acceptable input
     if(!(detector_type=="tracker" || detector_type=="calorimeter"
          || detector_type=="muon chamber"))
     {
@@ -224,7 +227,7 @@ public:
     detection_count = new_count;
     if(detection_count>total_particle_count)
     {
-      std::cout<<"WARNING: Detection count set to a value large than"
+      std::cout<<"WARNING: Detection count set to a value larger than"
       " the total count. The total count has been set to this value."
       <<std::endl;
       total_particle_count = new_count;
@@ -311,6 +314,60 @@ void pass_particles_through_detector(detector& current_detector,
   current_detector.turn_off();
 }
 
+// Function to print out all the particle information
+void print_all_particle_info(std::vector<particle>& particles)
+{
+  std::cout<<"============================="<<std::endl
+           <<"          PARTICLES"<<std::endl
+           <<"============================="<<std::endl;
+  int i{1};
+  for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
+  {
+    std::cout<<"Particle "<<i<<" ("<<(*particle).get_name()<<"):"<<std::endl
+             <<"-----------------------------"<<std::endl;
+    (*particle).print_data();
+    std::cout<<"-----------------------------"<<std::endl;
+    i++;
+  }
+}
+
+// Function to run given particles through given detectors
+void run_particles_through_detectors(std::vector<detector>& detectors,
+                                     std::vector<particle>& particles)
+{
+  std::cout<<std::endl
+           <<"============================="<<std::endl
+           <<"          DETECTION"<<std::endl
+           <<"============================="<<std::endl;
+  for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
+  {
+    // .. print which detector is currently in use
+    std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl;
+    std::cout<<"-----------------------------"<<std::endl;
+    // .. pass the particles through it
+    pass_particles_through_detector((*detector), particles);
+    std::cout<<"-----------------------------"<<std::endl;
+  }
+}
+
+// Function to provide a summary of the detector results after
+// particles have been run through them
+void print_detector_results(std::vector<detector>& detectors)
+{
+  std::cout<<std::endl
+           <<"============================="<<std::endl
+           <<"           SUMMARY"<<std::endl
+           <<"============================="<<std::endl;
+  // .. loop over each detector
+  for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
+  {
+    std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl
+             <<"-----------------------------"<<std::endl;
+    (*detector).print_data();
+    std::cout<<"-----------------------------"<<std::endl;
+  }
+}
+
 // Main program
 int main()
 {
@@ -332,18 +389,7 @@ int main()
   particles.emplace_back("muon", muon_rest_mass, -1, 0.0);
 
   // Print out the data from all the particles
-  std::cout<<"============================="<<std::endl
-           <<"          PARTICLES"<<std::endl
-           <<"============================="<<std::endl;
-  int i{1};
-  for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
-  {
-    std::cout<<"Particle "<<i<<" ("<<(*particle).get_name()<<"):"<<std::endl
-             <<"-----------------------------"<<std::endl;
-    (*particle).print_data();
-    std::cout<<"-----------------------------"<<std::endl;
-    i++;
-  }
+  print_all_particle_info(particles);
 
   // Create a vector of detectors:
   // a tracker, a calorimeter, a muon chamber
@@ -354,33 +400,10 @@ int main()
   detectors.emplace_back("muon chamber", false);
 
   // Pass the list of particles into each detector
-  std::cout<<std::endl
-           <<"============================="<<std::endl
-           <<"          DETECTION"<<std::endl
-           <<"============================="<<std::endl;
-  for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
-  {
-    // .. print which detector is currently in use
-    std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl;
-    std::cout<<"-----------------------------"<<std::endl;
-    // .. pass the particles through it
-    pass_particles_through_detector((*detector), particles);
-    std::cout<<"-----------------------------"<<std::endl;
-  }
+  run_particles_through_detectors(detectors, particles);
 
   // Print a summary of how many particles were detected
-  std::cout<<std::endl
-           <<"============================="<<std::endl
-           <<"           SUMMARY"<<std::endl
-           <<"============================="<<std::endl;
-  // .. loop over each detector
-  for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
-  {
-    std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl
-             <<"-----------------------------"<<std::endl;
-    (*detector).print_data();
-    std::cout<<"-----------------------------"<<std::endl;
-  }
+  print_detector_results(detectors);
 
   return 0;
 }
