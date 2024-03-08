@@ -54,6 +54,44 @@ private:
   double velocity{0};
   double beta{velocity/speed_of_light};
 
+  // Validation functions
+  // .. particle type
+  void validate_type()
+  {
+    if(!(particle_type=="electron" || particle_type=="muon"))
+    {
+      std::cout<<"Provided type "<<particle_type<<" is not 'electron' or 'muon'";
+      throw std::invalid_argument("Invalid particle type.");
+    }
+  }
+  // .. rest mass
+  void validate_mass()
+  {
+    if(rest_mass<=0)
+    {
+      std::cout<<"Particle masses must be positive. You entered "<<rest_mass;
+      throw std::invalid_argument("Invalid particle mass.");
+    }
+  }
+  // .. charge
+  void validate_charge()
+  {
+    if(std::abs(charge)!=1)
+    {
+      std::cout<<"Particle charges must be 1 or -1. You entered "<<charge;
+      throw std::invalid_argument("Invalid particle charge.");
+    }
+  }
+  // .. velocity
+  void validate_velocity()
+  {
+    if(std::abs(velocity)>speed_of_light)
+    {
+      std::cout<<"Particle velocity "<<velocity<<" m/s exceeds the speed of light";
+      throw std::invalid_argument("Invalid particle velocity.");
+    }
+  }
+
 public:
   // Constructors
   // .. Default constructor
@@ -65,18 +103,17 @@ public:
            velocity{particle_velocity}, beta{particle_velocity/speed_of_light}
   {
     // Make particle_type lowercase
-    // std::transform(particle_type.begin(), particle_type.end(), particle_type.begin(),
-    //                [](unsigned char c){return std::tolower(c);});
     to_lowercase(particle_type);
 
     // Validation
+    // .. check that the particle type is either "electron" or "muon"
+    validate_type();
     // .. check that the particle speed doesn't exceed the speed of light
-    if(std::abs(particle_velocity)>speed_of_light)
-      throw std::invalid_argument(
-      "Velocity " + std::to_string(particle_velocity) + " m/s exceeds the speed of light");
+    validate_velocity();
     // .. check that the mass is not negative
-    if(mass<0) throw std::invalid_argument(
-      "Particle masses cannot be negative. You entered " + std::to_string(mass));
+    validate_mass();
+    // .. check that the charge is either 1 or -1
+    validate_charge();
   }
 
   // Destructor
@@ -96,16 +133,15 @@ public:
   // Setter functions, to change value of data members
   // Make sure you check input validity before changing something
   // Hint: you can use the input checking functions you used in assignment 1
-  // TODO: VALIDATION
-  void set_type(const string& type){particle_type = type;}
-  void set_rest_mass(const double& mass){rest_mass = mass;}
-  void set_charge(const int& charge_quanta){charge = charge_quanta;}
+  void set_type(const string& type){particle_type = type; validate_type();}
+  void set_rest_mass(const double& mass){rest_mass = mass; validate_mass();}
+  void set_charge(const int& charge_quanta){charge = charge_quanta; validate_charge();}
   void set_velocity(const double& particle_velocity)
   {
-    velocity = particle_velocity; // VALIDATION (<c) !!!!
+    velocity = particle_velocity;
+    validate_velocity();
     beta = velocity/speed_of_light;
   }
-  //void set_beta(const double& name){return beta;}
 
   // Function to print info about a particle
   void print_data() const
@@ -289,7 +325,7 @@ int main()
   std::vector<particle> particles;
 
   particles.emplace_back("electron", electron_rest_mass, 1, 41.21);
-  particles.emplace_back("ELecTrOn", electron_rest_mass, 1, -2.01e8);
+  particles.emplace_back("electron", electron_rest_mass, 1, -2.01e8);
   particles.emplace_back("muon", muon_rest_mass, 1, 34324.12);
   particles.emplace_back("muon", muon_rest_mass, 1, -612.5421);
   particles.emplace_back("muon", muon_rest_mass, 1, 9.6233e3);
