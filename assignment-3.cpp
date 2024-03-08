@@ -16,10 +16,10 @@ using std::string;
 
 /* ----
 TODO:
- - Validate only electron/muons allowed? Be stricter with mass checking?
+ - ///Validate only electron/muons allowed? Be stricter with mass checking?
  - ///Introduce const-ness to variables and arguments where needed///
  - Setter function validation
- - Move velocity<c check to separate function so can be reused
+ - ///Move velocity<c check to separate function so can be reused
  - Update velocity to be speed instead, as asked for my assignment
    (OR, ADD A COMMENT TO MY CODE SAYING WHAT I HAVE DONE INSTEAD)
  - Add a setter for beta directly which infers velocity.
@@ -201,6 +201,28 @@ private:
     return false;
   }
 
+  // Validation functions
+  // .. detector type
+  void validate_type()
+  {
+    if(!(detector_type=="tracker" || detector_type=="calorimeter"
+         || detector_type=="muon chamber"))
+    {
+      std::cout<<"Provided type "<<detector_type<<" is not 'tracker',"
+      "'calorimeter' or 'muon chamber'";
+      throw std::invalid_argument("Invalid detector type.");
+    }
+  }
+  // .. counts
+  void validate_count(const size_t& count)
+  {
+    if(count<0)
+    {
+      std::cout<<"Provided count "<<count<<" is less than zero";
+      throw std::invalid_argument("Invalid count provided.");
+    }
+  }
+
 public:
   // Constructors
   // .. Default constructor
@@ -209,8 +231,8 @@ public:
   detector(string type, bool initial_status) : detector_type{type}, status{initial_status}
   {
     // Validation
-    // TODO!!
     // .. check that the detector type is valid
+    validate_type();
   }
 
   // Destructor
@@ -226,11 +248,12 @@ public:
 
   // Setters
   // TODO: VALIDATION
-  void set_detector_type(const string& type){detector_type = type;}
+  void set_detector_type(const string& type){detector_type = type; validate_type();}
   void turn_on(){status=true;}
   void turn_off(){status=false;}
   void set_detection_count(const size_t& new_count)
   {
+    validate_count(new_count);
     detection_count = new_count;
     if(detection_count>total_particle_count)
     {
@@ -242,6 +265,7 @@ public:
   }
   void set_electron_detection_count(const size_t& new_count)
   {
+    validate_count(new_count);
     electron_detection_count = new_count;
     detection_count = new_count + muon_detection_count;
     if(detection_count>total_particle_count)
@@ -254,6 +278,7 @@ public:
   }
   void set_muon_detection_count(const size_t& new_count)
   {
+    validate_count(new_count);
     muon_detection_count = new_count;
     detection_count = new_count + electron_detection_count;
     if(detection_count>total_particle_count)
@@ -265,7 +290,10 @@ public:
     }
   }
   void set_total_particle_count(const size_t& new_count)
-       {total_particle_count = new_count;}
+  {
+    validate_count(new_count);
+    total_particle_count = new_count;
+  }
 
   // Print the detector information
   void print_data() const;
