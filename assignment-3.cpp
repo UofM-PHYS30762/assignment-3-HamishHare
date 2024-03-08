@@ -7,10 +7,21 @@
 #include<string>
 #include<vector>
 #include<cmath>
+#include<sstream>
 #include<cstdlib> // for abs() function
-#include <stdexcept> // for throwing exceptions
+#include<stdexcept> // for throwing exceptions
 
 using std::string;
+
+/* ----
+TODO:
+ - Validate only electron/muons allowed? Be stricter with mass checking?
+ - Introduce const-ness to variables and arguments where needed
+ - Setter function validation
+ - Move velocity<c check to separate function so can be reused
+ - Format outputs
+ - MOVE IMPLEMENTATION OF FUNCTIONS OUTSIDE THE CLASS
+---- */
 
 // Beginning of particle class
 class particle
@@ -49,16 +60,51 @@ public:
   // Getter functions
   string get_name(){return particle_name;}
   double get_rest_mass(){return rest_mass;}
-  double get_charge(){return charge;}
+  int get_charge(){return charge;}
   double get_velocity(){return velocity;}
   double get_beta(){return beta;}
 
   // Setter functions, to change value of data members
   // Make sure you check input validity before changing something
   // Hint: you can use the input checking functions you used in assignment 1
+  // TODO: VALIDATION
+  void set_name(const string& name){particle_name = name;}
+  void set_rest_mass(const double& mass){rest_mass = mass;}
+  void set_charge(const int& charge_quanta){charge = charge_quanta;}
+  void set_velocity(const double& particle_velocity)
+  {
+    velocity = particle_velocity; // VALIDATION (<c) !!!!
+    beta = velocity/speed_of_light;
+  }
+  //void set_beta(const double& name){return beta;}
 
   // Function to print info about a particle
-  void print_data();
+  void print_data()
+  {
+    std::cout<<"Name: "<<particle_name<<" Mass: "<<rest_mass<<
+    " Charge: "<<charge<<" Vel: "<<velocity<<
+    " Beta: "<<beta<<std::endl;
+
+    std::cout<<"--------------------------------"<<std::endl;
+    std::cout<<"Particle:"<<std::endl
+    <<" -- Type: "<<particle_name<<std::endl
+    <<" -- Mass: "<<rest_mass<<std::endl
+    <<" -- Charge: "<<charge<<std::endl
+    <<" -- Velocity: "<<velocity<<std::endl
+    <<" -- Beta: "<<beta<<std::endl;
+    std::cout<<"--------------------------------"<<std::endl;
+
+    // std::ostringstream output_stream;
+
+    // output_stream<<"Particle details:"<<std::endl
+    // <<" -- Type: "<<particle_name<<std::endl
+    // <<" -- Rest mass: "<<rest_mass<<" MeV"<<std::endl
+    // <<" -- Charge: "<<charge<<std::endl
+    // <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
+    // <<" -- Beta: "<<beta<<std::endl;
+    //course_name = course_name_stream.str();
+    //course_name_stream.str(""); // clear stream
+  }
 
 };
 
@@ -76,6 +122,58 @@ public:
 //   and of which type
 // - write a function (accessor) that prints how many particles passed through this detector
 
+class detector
+{
+private:
+  string detector_type{"tracker"};
+  bool status{false}; // true <--> on, false <--> off
+  size_t detection_count{0};
+
+  // Function to get on/off message depending on status
+  string const status_message()
+  {
+    if(status) return "on"; else return "off";
+  }
+
+public:
+  // Constructors
+  // .. Default constructor
+  detector() = default;
+  // .. Parameterised constructor
+  detector(string type, bool initial_status) : detector_type{type}, status{initial_status}
+  {
+    // Validation
+    // .. check that the detector type is valid
+  }
+
+  // Destructor
+  ~detector(){std::cout<<"Destroyed a "<<detector_type<<std::endl;} // DEBUG comment
+
+  // Getters
+  string get_detector_type(){return detector_type;}
+  bool get_status(){return status;}
+  size_t get_detection_count(){return detection_count;}
+
+  // Setters
+  // TODO: VALIDATION
+  void set_detector_type(const string& type){detector_type = type;}
+  void turn_on(){status=true;}
+  void turn_off(){status=true;}
+  void set_detection_count(const size_t& new_count){detection_count = new_count;}
+
+  // Print the detector information
+  void print_data()
+  {
+    std::cout<<"--------------------------------"<<std::endl;
+    std::cout<<"Detector:"<<std::endl
+    <<" -- Type: "<<detector_type<<std::endl
+    <<" -- Status: "<<status_message()<<std::endl
+    <<" -- Count: "<<detection_count<<std::endl;
+    std::cout<<"--------------------------------"<<std::endl;
+  }
+
+};
+
 // End of detector class
 
 // Main program
@@ -90,9 +188,17 @@ int main()
   //particle e3("electron", 0.511, 1, -3.12012e9); // Exceed speed of light
   //particle e4("electron", -0.511, 1, 3.12012e7); // Negative mass
 
-  std::cout<<"Name: "<<e1.get_name()<<" Mass: "<<e1.get_rest_mass()<<
-  " Charge: "<<e1.get_charge()<<" Vel: "<<e1.get_velocity()<<
-  " Beta: "<<e1.get_beta()<<std::endl;
+  // std::cout<<"Name: "<<e2.get_name()<<" Mass: "<<e2.get_rest_mass()<<
+  // " Charge: "<<e2.get_charge()<<" Vel: "<<e2.get_velocity()<<
+  // " Beta: "<<e2.get_beta()<<std::endl;
+  e2.print_data();
+
+  detector d1;
+  detector d2("muon chamber", true);
+  d2.set_detection_count(20);
+
+  d1.print_data();
+  d2.print_data();
 
   // Create the following particles: 
   // two electrons, four muons, one antielectron, one antimuon
