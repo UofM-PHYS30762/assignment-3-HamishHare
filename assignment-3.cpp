@@ -155,7 +155,7 @@ public:
   // TODO: VALIDATION
   void set_detector_type(const string& type){detector_type = type;}
   void turn_on(){status=true;}
-  void turn_off(){status=true;}
+  void turn_off(){status=false;}
   void set_detection_count(const size_t& new_count){detection_count = new_count;}
 
   // Print the detector information
@@ -207,6 +207,9 @@ int main()
   d2.print_data();
 
   d2.detect_particle(e1);
+  d2.print_data();
+  d2.turn_off();
+  d2.detect_particle(e2);
   d2.print_data();
 
   // Create the following particles: 
