@@ -27,6 +27,8 @@ TODO:
       getting the type. Maybe restructure to instead have variable called
       'type' or 'family' and then a different getter that gets the name
       (formatted for anti- or not) rather than this type (used for checking).///
+ - Keep track of counts of electrons and muons detected individually,
+   rather than just total detections of both
 ---- */
 
 // Beginning of particle class
@@ -124,14 +126,14 @@ private:
   size_t total_particle_count{0};
 
   // Function to get on/off message depending on status
-  string const status_message()
+  string status_message() const
   {
     if(status) return "on"; else return "off";
   }
 
   // Function to check if the given particle can be detected
   // by this detector
-  bool const can_detect(particle& particle)
+  bool can_detect(const particle& particle) const
   {
     string particle_type = particle.get_type();
     // .. tracker can detect both electrons and muons
@@ -161,10 +163,10 @@ public:
   ~detector(){std::cout<<"Destroyed a "<<detector_type<<std::endl;} // DEBUG comment
 
   // Getters
-  string get_detector_type(){return detector_type;}
-  bool get_status(){return status;}
-  size_t get_detection_count(){return detection_count;}
-  size_t get_total_particle_count(){return total_particle_count;}
+  string get_detector_type() const {return detector_type;}
+  bool get_status() const {return status;}
+  size_t get_detection_count() const {return detection_count;}
+  size_t get_total_particle_count() const {return total_particle_count;}
 
   // Setters
   // TODO: VALIDATION
@@ -185,7 +187,7 @@ public:
        {total_particle_count = new_count;}
 
   // Print the detector information
-  void const print_data()
+  void print_data() const
   {
     std::cout
     <<" -- Status: "<<status_message()<<std::endl
@@ -193,7 +195,7 @@ public:
     <<" -- Total particle count: "<<total_particle_count<<std::endl;
   }
 
-  int detect_particle(particle& particle)
+  int detect_particle(const particle& particle)
   {
     // Increase total particle count
     total_particle_count++;
