@@ -46,8 +46,12 @@ public:
   // Destructor
   ~particle(){std::cout<<"Destroyed an "<<particle_name<<std::endl;} // DEBUG comment
 
-  // Getter functions (accessors) to 
-  // This should include function returning beta value 
+  // Getter functions
+  string get_name(){return particle_name;}
+  double get_rest_mass(){return rest_mass;}
+  double get_charge(){return charge;}
+  double get_velocity(){return velocity;}
+  double get_beta(){return beta;}
 
   // Setter functions, to change value of data members
   // Make sure you check input validity before changing something
@@ -83,8 +87,12 @@ int main()
 
   particle e1;
   particle e2("electron", 0.511, 1, 1213131.0);
-  //particle e3("electron", 0.511, 1, -3.12012e9);
-  particle e4("electron", -0.511, 1, 3.12012e7);
+  //particle e3("electron", 0.511, 1, -3.12012e9); // Exceed speed of light
+  //particle e4("electron", -0.511, 1, 3.12012e7); // Negative mass
+
+  std::cout<<"Name: "<<e1.get_name()<<" Mass: "<<e1.get_rest_mass()<<
+  " Charge: "<<e1.get_charge()<<" Vel: "<<e1.get_velocity()<<
+  " Beta: "<<e1.get_beta()<<std::endl;
 
   // Create the following particles: 
   // two electrons, four muons, one antielectron, one antimuon
