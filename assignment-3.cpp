@@ -33,10 +33,14 @@ public:
     particle_name{name}, rest_mass{mass}, charge{charge_quanta}, velocity{particle_velocity},
     beta{particle_velocity/speed_of_light}
   {
-    // check that the particle speed does not exceed the speed of light
+    // Validation
+    // .. check that the particle speed doesn't exceed the speed of light
     if(std::abs(particle_velocity)>speed_of_light)
       throw std::invalid_argument(
-        "Velocity " + std::to_string(particle_velocity) + " m/s exceeds the speed of light");
+      "Velocity " + std::to_string(particle_velocity) + " m/s exceeds the speed of light");
+    // .. check that the mass is not negative
+    if(mass<0) throw std::invalid_argument(
+      "Particle masses cannot be negative. You entered " + std::to_string(mass));
   }
 
   // Destructor
@@ -73,9 +77,14 @@ public:
 // Main program
 int main()
 {
+  // Constants
+  double electron_rest_mass{0.51099895}; // MeV
+  double muon_rest_mass{105.6583755}; // MeV
+
   particle e1;
   particle e2("electron", 0.511, 1, 1213131.0);
-  particle e3("electron", 0.511, 1, -3.12012e9);
+  //particle e3("electron", 0.511, 1, -3.12012e9);
+  particle e4("electron", -0.511, 1, 3.12012e7);
 
   // Create the following particles: 
   // two electrons, four muons, one antielectron, one antimuon
