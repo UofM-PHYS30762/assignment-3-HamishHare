@@ -124,6 +124,7 @@ private:
   string detector_type{"tracker"};
   bool status{false}; // true <--> on, false <--> off
   size_t detection_count{0};
+  size_t total_particle_count{0};
 
   // Function to get on/off message depending on status
   string const status_message()
@@ -166,13 +167,25 @@ public:
   string get_detector_type(){return detector_type;}
   bool get_status(){return status;}
   size_t get_detection_count(){return detection_count;}
+  size_t get_total_particle_count(){return total_particle_count;}
 
   // Setters
   // TODO: VALIDATION
   void set_detector_type(const string& type){detector_type = type;}
   void turn_on(){status=true;}
   void turn_off(){status=false;}
-  void set_detection_count(const size_t& new_count){detection_count = new_count;}
+  void set_detection_count(const size_t& new_count)
+  {
+    detection_count = new_count;
+    if(detection_count>total_particle_count)
+    {
+      std::cout<<"WARNING: Detection count set to a value large than"
+      " the total count, updating the total count to match"<<std::endl;
+      total_particle_count = new_count;
+    }
+  }
+  void set_total_particle_count(const size_t& new_count)
+       {total_particle_count = new_count;}
 
   // Print the detector information
   void const print_data()
@@ -181,12 +194,15 @@ public:
     std::cout<<"Detector:"<<std::endl
     <<" -- Type: "<<detector_type<<std::endl
     <<" -- Status: "<<status_message()<<std::endl
-    <<" -- Count: "<<detection_count<<std::endl;
+    <<" -- Detected: "<<detection_count<<std::endl
+    <<" -- Total Count: "<<total_particle_count<<std::endl;
     std::cout<<"--------------------------------"<<std::endl;
   }
 
   int detect_particle(particle& particle)
   {
+    // Increase total particle count
+    total_particle_count++;
     // Check if the detector is on and is able to detect the particle
     if(status && can_detect(particle))
     {
@@ -216,23 +232,23 @@ int main()
   detector d1;
   detector d2("muon chamber", true);
   d2.set_detection_count(20);
-  //d1.print_data();
-  //d2.print_data();
 
   particle m1("muon", muon_rest_mass, -1, 6.943e7);
-  m1.print_data();
 
   d2.print_data();
-  d2.detect_particle(e1);
-  d2.print_data();
   d2.detect_particle(m1);
+  d2.print_data();
   d2.turn_off();
   d2.detect_particle(m1);
+  d2.print_data();
+  d2.detect_particle(e2);
   d2.print_data();
 
   // Create the following particles: 
   // two electrons, four muons, one antielectron, one antimuon
   // Use the parameterised constructor
+  // Create paricles:
+
 
   // Print out the data from all the particles (put them in a vector)
 
