@@ -14,27 +14,6 @@
 
 using std::string;
 
-/* ----
-TODO:
- - ///Validate only electron/muons allowed? Be stricter with mass checking?
- - ///Introduce const-ness to variables and arguments where needed///
- - Setter function validation
- - ///Move velocity<c check to separate function so can be reused
- - Update velocity to be speed instead, as asked for my assignment
-   (OR, ADD A COMMENT TO MY CODE SAYING WHAT I HAVE DONE INSTEAD)
- - Add a setter for beta directly which infers velocity.
- - ///Format outputs///
- - MOVE IMPLEMENTATION OF FUNCTIONS OUTSIDE THE CLASS
- - All other validation
- - ///Deal with regular/anti-particles better. Rename charge variables
-      to reflect the multiples of e and add 'anti' onto the name when
-      getting the type. Maybe restructure to instead have variable called
-      'type' or 'family' and then a different getter that gets the name
-      (formatted for anti- or not) rather than this type (used for checking).///
- - ///Keep track of counts of electrons and muons detected individually,
-      rather than just total detections of both///
----- */
-
 // Function to convert strings to lowercase
 void to_lowercase(string& input_string)
 {
@@ -131,8 +110,6 @@ public:
   double get_beta() const {return beta;}
 
   // Setter functions, to change value of data members
-  // Make sure you check input validity before changing something
-  // Hint: you can use the input checking functions you used in assignment 1
   void set_type(const string& type){particle_type = type; validate_type();}
   void set_rest_mass(const double& mass){rest_mass = mass; validate_mass();}
   void set_charge(const int& charge_quanta){charge = charge_quanta; validate_charge();}
@@ -160,15 +137,6 @@ void particle::print_data() const
 // End of particle class and associated member functions
 
 // Beginning of detector class
-
-// Functionalities needed, in addition to constructor/destructor/setters/getters (see slides on BB):
-// - write a function that takes a particle 
-//   and returns a bool and a print-out on whether this type of detector detected the particle
-//   depending on the detector/particle combination (see slides on BB)
-// - have data members that keep track of how many particles were detected by this particular detector, 
-//   and of which type
-// - write a function (accessor) that prints how many particles passed through this detector
-
 class detector
 {
 private:
@@ -247,7 +215,6 @@ public:
   size_t get_total_particle_count() const {return total_particle_count;}
 
   // Setters
-  // TODO: VALIDATION
   void set_detector_type(const string& type){detector_type = type; validate_type();}
   void turn_on(){status=true;}
   void turn_off(){status=false;}
@@ -327,7 +294,6 @@ void detector::print_data() const
   <<", Muons: "<<muon_detection_count<<")"<<std::endl
   <<" -- Total particle count: "<<total_particle_count<<std::endl;
 }
-
 // End of detector class
 
 // Function to run a vector of particles through a detector
