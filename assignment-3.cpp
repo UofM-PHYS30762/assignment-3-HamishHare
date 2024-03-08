@@ -21,6 +21,12 @@ TODO:
  - Move velocity<c check to separate function so can be reused
  - Format outputs
  - MOVE IMPLEMENTATION OF FUNCTIONS OUTSIDE THE CLASS
+ - All other validation
+ - Deal with regular/anti-particles better. Rename charge variables
+   to reflect the multiples of e and add 'anti' onto the name when
+   getting the type. Maybe restructure to instead have variable called
+   'type' or 'family' and then a different getter that gets the name
+   (formatted for anti- or not) rather than this type (used for checking).
 ---- */
 
 // Beginning of particle class
@@ -216,6 +222,9 @@ public:
 
 // End of detector class
 
+// Function to run a vector of particles through a detector
+
+
 // Main program
 int main()
 {
@@ -261,7 +270,7 @@ int main()
   particles.emplace_back("muon", muon_rest_mass, -1, 0.0);
 
   // Print out the data from all the particles
-  for(auto particle=particles.begin(); particle<particles.end(); ++particle)
+  for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
   {
     (*particle).print_data();
   }
@@ -269,8 +278,29 @@ int main()
   // Create the following detectors: a tracker, a calorimeter, a muon chamber
   // Create a vector of detectors:
   // a tracker, a calorimeter, a muon chamber
+  std::vector<detector> detectors;
+
+  detectors.emplace_back("tracker", false);
+  detectors.emplace_back("calorimeter", false);
+  detectors.emplace_back("muon chamber", false);
 
   // Pass the list of particles into each detector
+  for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
+  {
+    std::cout<<std::endl<<"===================================="<<std::endl;
+    std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl;
+    std::cout<<"------------------------------------"<<std::endl;
+    // .. turn detector on
+    (*detector).turn_on();
+    // .. pass particles through it
+    for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
+    {
+      (*detector).detect_particle(*particle);
+    }
+    // .. turn detector off
+    (*detector).turn_off();
+    std::cout<<"===================================="<<std::endl;
+  }
 
   // Print a summary of how many particles were detected
 
