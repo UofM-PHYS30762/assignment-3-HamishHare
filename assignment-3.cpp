@@ -123,6 +123,8 @@ private:
   string detector_type{"tracker"};
   bool status{false}; // true <--> on, false <--> off
   size_t detection_count{0};
+  size_t electron_detection_count{0};
+  size_t muon_detection_count{0};
   size_t total_particle_count{0};
 
   // Function to get on/off message depending on status
@@ -166,6 +168,8 @@ public:
   string get_detector_type() const {return detector_type;}
   bool get_status() const {return status;}
   size_t get_detection_count() const {return detection_count;}
+  size_t get_electron_detection_count() const {return electron_detection_count;}
+  size_t get_muon_detection_count() const {return muon_detection_count;}
   size_t get_total_particle_count() const {return total_particle_count;}
 
   // Setters
@@ -179,8 +183,33 @@ public:
     if(detection_count>total_particle_count)
     {
       std::cout<<"WARNING: Detection count set to a value large than"
-      " the total count, updating the total count to match"<<std::endl;
+      " the total count. The total count has been set to this value."
+      <<std::endl;
       total_particle_count = new_count;
+    }
+  }
+  void set_electron_detection_count(const size_t& new_count)
+  {
+    electron_detection_count = new_count;
+    detection_count = new_count + muon_detection_count;
+    if(detection_count>total_particle_count)
+    {
+      std::cout<<"WARNING: Changing the electron detection count led to"
+      " a combined detection count larger than the total count. The total"
+      " count has been set to the new combined detection count"<<std::endl;
+      total_particle_count = detection_count;
+    }
+  }
+  void set_muon_detection_count(const size_t& new_count)
+  {
+    muon_detection_count = new_count;
+    detection_count = new_count + electron_detection_count;
+    if(detection_count>total_particle_count)
+    {
+      std::cout<<"WARNING: Changing the muon detection count led to a"
+      " combined detection count larger than the total count. The total"
+      " count has been set to the new combined detection count"<<std::endl;
+      total_particle_count = detection_count;
     }
   }
   void set_total_particle_count(const size_t& new_count)
@@ -192,21 +221,27 @@ public:
     std::cout
     <<" -- Status: "<<status_message()<<std::endl
     <<" -- Detected particles: "<<detection_count<<std::endl
+    <<"   (Electrons: "<<electron_detection_count
+    <<", Muons: "<<muon_detection_count<<")"<<std::endl
     <<" -- Total particle count: "<<total_particle_count<<std::endl;
   }
 
-  int detect_particle(const particle& particle)
+  bool detect_particle(const particle& particle)
   {
     // Increase total particle count
     total_particle_count++;
     // Check if the detector is on and is able to detect the particle
     if(status && can_detect(particle))
     {
-      detection_count++;
+      // .. announce the detected particle
       std::cout<<particle.get_name()<<" was detected"<<std::endl;
-      return 1;
+      // .. update counts
+      detection_count++;
+      if(particle.get_type()=="electron") electron_detection_count++;
+      else if (particle.get_type()=="muon") muon_detection_count++;
+      return true; // detected
     }
-    return 0;
+    return false; // undetected
   }
 };
 // End of detector class
