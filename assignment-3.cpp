@@ -10,15 +10,19 @@
 #include<sstream>
 #include<cstdlib> // for abs() function
 #include<stdexcept> // for throwing exceptions
+#include<algorithm> // for transform() function
 
 using std::string;
 
 /* ----
 TODO:
  - Validate only electron/muons allowed? Be stricter with mass checking?
- - Introduce const-ness to variables and arguments where needed
+ - ///Introduce const-ness to variables and arguments where needed///
  - Setter function validation
  - Move velocity<c check to separate function so can be reused
+ - Update velocity to be speed instead, as asked for my assignment
+   (OR, ADD A COMMENT TO MY CODE SAYING WHAT I HAVE DONE INSTEAD)
+ - Add a setter for beta directly which infers velocity.
  - ///Format outputs///
  - MOVE IMPLEMENTATION OF FUNCTIONS OUTSIDE THE CLASS
  - All other validation
@@ -27,8 +31,8 @@ TODO:
       getting the type. Maybe restructure to instead have variable called
       'type' or 'family' and then a different getter that gets the name
       (formatted for anti- or not) rather than this type (used for checking).///
- - Keep track of counts of electrons and muons detected individually,
-   rather than just total detections of both
+ - ///Keep track of counts of electrons and muons detected individually,
+      rather than just total detections of both///
 ---- */
 
 // Beginning of particle class
@@ -53,6 +57,10 @@ public:
            particle_type{type}, rest_mass{mass}, charge{charge_quanta},
            velocity{particle_velocity}, beta{particle_velocity/speed_of_light}
   {
+    // Make particle_type lowercase
+    std::transform(particle_type.begin(), particle_type.end(), particle_type.begin(),
+                   [](unsigned char c){return std::tolower(c);});
+
     // Validation
     // .. check that the particle speed doesn't exceed the speed of light
     if(std::abs(particle_velocity)>speed_of_light)
