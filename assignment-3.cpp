@@ -19,14 +19,14 @@ TODO:
  - Introduce const-ness to variables and arguments where needed
  - Setter function validation
  - Move velocity<c check to separate function so can be reused
- - Format outputs
+ - ///Format outputs///
  - MOVE IMPLEMENTATION OF FUNCTIONS OUTSIDE THE CLASS
  - All other validation
- - Deal with regular/anti-particles better. Rename charge variables
-   to reflect the multiples of e and add 'anti' onto the name when
-   getting the type. Maybe restructure to instead have variable called
-   'type' or 'family' and then a different getter that gets the name
-   (formatted for anti- or not) rather than this type (used for checking).
+ - ///Deal with regular/anti-particles better. Rename charge variables
+      to reflect the multiples of e and add 'anti' onto the name when
+      getting the type. Maybe restructure to instead have variable called
+      'type' or 'family' and then a different getter that gets the name
+      (formatted for anti- or not) rather than this type (used for checking).///
 ---- */
 
 // Beginning of particle class
@@ -46,9 +46,10 @@ public:
   // .. Default constructor
   particle() = default;
   // .. Parameterised constructor
-  particle(string type, double mass, int charge_quanta, double particle_velocity) :
-    particle_type{type}, rest_mass{mass}, charge{charge_quanta}, velocity{particle_velocity},
-    beta{particle_velocity/speed_of_light}
+  particle(const string& type, const double& mass, const int& charge_quanta,
+           const double& particle_velocity) :
+           particle_type{type}, rest_mass{mass}, charge{charge_quanta},
+           velocity{particle_velocity}, beta{particle_velocity/speed_of_light}
   {
     // Validation
     // .. check that the particle speed doesn't exceed the speed of light
@@ -64,15 +65,15 @@ public:
   ~particle(){std::cout<<"Destroyed an "<<particle_type<<std::endl;} // DEBUG comment
 
   // Getter functions
-  string get_type(){return particle_type;}
-  string get_name() // adapt the particle name if it's an anti-particle
+  string get_type() const {return particle_type;}
+  string get_name() const // adapt the particle name if it's an anti-particle
   {
     if(charge<0) return "anti"+particle_type; else return particle_type;
   }
-  double get_rest_mass(){return rest_mass;}
-  int get_charge(){return charge;}
-  double get_velocity(){return velocity;}
-  double get_beta(){return beta;}
+  double get_rest_mass() const {return rest_mass;}
+  int get_charge() const {return charge;}
+  double get_velocity() const {return velocity;}
+  double get_beta() const {return beta;}
 
   // Setter functions, to change value of data members
   // Make sure you check input validity before changing something
@@ -89,7 +90,7 @@ public:
   //void set_beta(const double& name){return beta;}
 
   // Function to print info about a particle
-  void const print_data()
+  void print_data() const
   {
     std::cout
     <<" -- Type: "<<particle_type<<std::endl
