@@ -131,6 +131,22 @@ private:
     if(status) return "on"; else return "off";
   }
 
+  // Function to check if the given particle can be detected
+  // by this detector
+  bool const can_detect(particle& particle)
+  {
+    string particle_name = particle.get_name();
+    // .. tracker can detect both electrons and muons
+    if(detector_type=="tracker" &&
+      (particle_name=="electron" || particle_name=="muon")) return true;
+    // .. calorimeter can detect electrons
+    else if(detector_type=="calorimeter" && particle_name=="electron") return true;
+    // .. muon chamber can detect muons
+    else if(detector_type=="muon chamber" && particle_name=="muon") return true;
+    // .. otherwise undetected
+    return false;
+  }
+
 public:
   // Constructors
   // .. Default constructor
@@ -171,15 +187,12 @@ public:
 
   int detect_particle(particle& particle)
   {
-    //TODO: MAKE THIS WORK CORRECTLY
-    if(status)
+    // Check if the detector is on and is able to detect the particle
+    if(status && can_detect(particle))
     {
-      if(particle.get_name()=="electron")
-      {
-        detection_count++;
-        std::cout<<particle.get_name()<<" was detected by a "<<detector_type<<std::endl;
-        return 1;
-      }
+      detection_count++;
+      std::cout<<particle.get_name()<<" was detected by a "<<detector_type<<std::endl;
+      return 1;
     }
     return 0;
   }
@@ -198,18 +211,23 @@ int main()
   particle e2("electron", 0.511, 1, 1213131.0);
   //particle e3("electron", 0.511, 1, -3.12012e9); // Exceed speed of light
   //particle e4("electron", -0.511, 1, 3.12012e7); // Negative mass
-  e2.print_data();
+  //e2.print_data();
 
   detector d1;
   detector d2("muon chamber", true);
   d2.set_detection_count(20);
   //d1.print_data();
-  d2.print_data();
+  //d2.print_data();
 
+  particle m1("muon", muon_rest_mass, -1, 6.943e7);
+  m1.print_data();
+
+  d2.print_data();
   d2.detect_particle(e1);
   d2.print_data();
+  d2.detect_particle(m1);
   d2.turn_off();
-  d2.detect_particle(e2);
+  d2.detect_particle(m1);
   d2.print_data();
 
   // Create the following particles: 
