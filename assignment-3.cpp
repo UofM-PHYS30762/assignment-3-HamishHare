@@ -201,7 +201,7 @@ public:
     <<" -- Type: "<<detector_type<<std::endl
     <<" -- Status: "<<status_message()<<std::endl
     <<" -- Detected: "<<detection_count<<std::endl
-    <<" -- Total Count: "<<total_particle_count<<std::endl;
+    <<" -- Total particle count: "<<total_particle_count<<std::endl;
     std::cout<<"--------------------------------"<<std::endl;
   }
 
@@ -219,11 +219,22 @@ public:
     return 0;
   }
 };
-
 // End of detector class
 
 // Function to run a vector of particles through a detector
-
+void pass_particles_through_detector(detector& current_detector,
+                                     std::vector<particle>& particles)
+{
+  // .. turn detector on
+  current_detector.turn_on();
+  // .. pass particles through it
+  for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
+  {
+    current_detector.detect_particle(*particle);
+  }
+  // .. turn detector off
+  current_detector.turn_off();
+}
 
 // Main program
 int main()
@@ -287,22 +298,23 @@ int main()
   // Pass the list of particles into each detector
   for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
   {
+    // .. print which detector is currently in use
     std::cout<<std::endl<<"===================================="<<std::endl;
     std::cout<<"For the "<<(*detector).get_detector_type()<<":"<<std::endl;
     std::cout<<"------------------------------------"<<std::endl;
-    // .. turn detector on
-    (*detector).turn_on();
-    // .. pass particles through it
-    for(auto particle{particles.begin()}; particle<particles.end(); ++particle)
-    {
-      (*detector).detect_particle(*particle);
-    }
-    // .. turn detector off
-    (*detector).turn_off();
+    // .. pass the particles through it
+    pass_particles_through_detector((*detector), particles);
     std::cout<<"===================================="<<std::endl;
   }
 
   // Print a summary of how many particles were detected
+  std::cout<<std::endl<<"==========================="<<std::endl;
+  std::cout<<"          SUMMARY"<<std::endl;
+  for(auto detector{detectors.begin()}; detector<detectors.end(); ++detector)
+  {
+    (*detector).print_data();
+  }
+  std::cout<<"==========================="<<std::endl;
 
   return 0;
 }
