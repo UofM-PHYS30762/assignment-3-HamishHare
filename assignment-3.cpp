@@ -96,7 +96,7 @@ public:
   }
 
   // Destructor
-  ~particle(){std::cout<<"Destroyed an "<<particle_type<<std::endl;} // DEBUG comment
+  ~particle(){}
 
   // Getter functions
   string get_type() const {return particle_type;}
@@ -204,7 +204,7 @@ public:
   }
 
   // Destructor
-  ~detector(){std::cout<<"Destroyed a "<<detector_type<<std::endl;} // DEBUG comment
+  ~detector(){}
 
   // Getters
   string get_detector_type() const {return detector_type;}
