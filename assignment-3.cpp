@@ -157,7 +157,6 @@ void particle::print_data() const
   <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
   <<" -- Beta: "<<beta<<std::endl;
 }
-
 // End of particle class and associated member functions
 
 // Beginning of detector class
@@ -269,15 +268,7 @@ public:
        {total_particle_count = new_count;}
 
   // Print the detector information
-  void print_data() const
-  {
-    std::cout
-    <<" -- Status: "<<status_message()<<std::endl
-    <<" -- Detected particles: "<<detection_count<<std::endl
-    <<"   (Electrons: "<<electron_detection_count
-    <<", Muons: "<<muon_detection_count<<")"<<std::endl
-    <<" -- Total particle count: "<<total_particle_count<<std::endl;
-  }
+  void print_data() const;
 
   bool detect_particle(const particle& particle)
   {
@@ -297,6 +288,18 @@ public:
     return false; // undetected
   }
 };
+
+// Separate print_data() implementation for detector
+void detector::print_data() const
+{
+  std::cout
+  <<" -- Status: "<<status_message()<<std::endl
+  <<" -- Detected particles: "<<detection_count<<std::endl
+  <<"   (Electrons: "<<electron_detection_count
+  <<", Muons: "<<muon_detection_count<<")"<<std::endl
+  <<" -- Total particle count: "<<total_particle_count<<std::endl;
+}
+
 // End of detector class
 
 // Function to run a vector of particles through a detector
