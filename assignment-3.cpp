@@ -144,18 +144,19 @@ public:
   }
 
   // Function to print info about a particle
-  void print_data() const
-  {
-    std::cout
-    <<" -- Type: "<<particle_type<<std::endl
-    <<" -- Rest Mass: "<<rest_mass<<" MeV"<<std::endl
-    <<" -- Charge: "<<-charge<<" e"<<std::endl
-    <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
-    <<" -- Beta: "<<beta<<std::endl;
-  }
+  void print_data() const;
 };
 
-// Implementation of print_data function goes here
+// Implementation of print_data function for particle
+void particle::print_data() const
+{
+  std::cout
+  <<" -- Type: "<<particle_type<<std::endl
+  <<" -- Rest Mass: "<<rest_mass<<" MeV"<<std::endl
+  <<" -- Charge: "<<-charge<<" e"<<std::endl
+  <<" -- Velocity: "<<velocity<<" m/s"<<std::endl
+  <<" -- Beta: "<<beta<<std::endl;
+}
 
 // End of particle class and associated member functions
 
